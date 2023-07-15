@@ -6,7 +6,7 @@
   "scripts": {
     "server": "nodemon server/index.js",
     "client": "webpack --mode development --watch",
-    "build": "npx webpack --mode production",
+    "build": "npm install && npx webpack --mode production",
     "start": "node server/index.js",
     "dev": "concurrently --kill-others \"npm run server\" \"npm run client\""
   },
