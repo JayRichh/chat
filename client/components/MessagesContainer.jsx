@@ -1,65 +1,150 @@
 import React from "react";
 import styled from "styled-components";
-import { ClipLoader } from "react-spinners";
+import { ThreeDots } from "react-loader-spinner";
+import { Flipper, Flipped } from "react-flip-toolkit";
 
 const MessagesContainer = ({ chatHistory, loading }) => {
   return (
     <Container>
-      {chatHistory.map(
-        (chat, index) =>
-          chat.role !== "system" && (
-            <MessageContainer
-              align={chat.role === "assistant" ? "left" : "right"}
-              key={index}
-            >
-              <Message align={chat.role === "assistant" ? "left" : "right"}>
-                {chat.content}
-              </Message>
-            </MessageContainer>
-          )
+      <Flipper flipKey={chatHistory}>
+        {chatHistory.map(
+          (chat, index) =>
+            chat.role !== "system" && (
+              <Flipped key={index} flipId={index}>
+                <MessageContainer
+                  align={chat.role === "assistant" ? "left" : "right"}
+                >
+                  {chat.role === "assistant" ? (
+                    <AIMessage>
+                      <p className="message">{chat.content}</p>
+                      <div className="bubble-arrow"></div>
+                    </AIMessage>
+                  ) : (
+                    <UserMessage>
+                      <p className="message">{chat.content}</p>
+                      <div className="bubble-arrow"></div>
+                    </UserMessage>
+                  )}
+                </MessageContainer>
+              </Flipped>
+            )
+        )}
+      </Flipper>
+      {loading && (
+        <LoadingSpinner>
+          <ThreeDots
+            type="ThreeDots"
+            color="#0084ff"
+            height={80}
+            width={80}
+            loading={loading}
+          />
+        </LoadingSpinner>
       )}
-      {loading && <ClipLoader color="#123abc" loading={loading} size={50} />}
     </Container>
   );
 };
 
-const Container = styled.div`
-  overflow-y: auto;
-  overflow-x: hidden;
-  flex-grow: 1;
-  padding: 0 0 10px 0;
-  border-radius: 10px;
-  margin-bottom: 10px;
-`;
-
 const MessageContainer = styled.div`
   display: flex;
-  justify-content: ${({ align }) =>
-    align === "right" ? "flex-end" : "flex-start"};
+  flex-direction: column;
+  align-items: ${(props) =>
+    props.align === "right" ? "flex-end" : "flex-start"};
+  width: 100%;
 `;
 
-const Message = styled.div`
-  position: relative;
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  gap: 1rem;
+  width: 100%;
+  max-height: 100%;
+  background: ##f1f0f17a;
+  border-radius: 4px;
+  shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+
+  &::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  .alt {
+    background-color: #0084ff;
+    box-shadow: -2px 2px 2px 0 rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const MessageBubble = styled.div`
   max-width: 70%;
-  background: ${({ align }) => (align === "right" ? "#0084ff" : "#eee")};
-  color: ${({ align }) => (align === "right" ? "#fff" : "#000")};
   padding: 10px;
-  border-radius: 20px;
-  margin-bottom: 10px;
+  border-radius: 10px;
+  margin: 5px;
+`;
+
+const UserMessage = styled(MessageBubble)`
+  align-self: flex-end;
+  background: #0084ff;
+  color: white;
+  margin: 0;
+
+  .message {
+    margin: 0;
+  }
+
   &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    ${({ align }) => (align === "right" ? "right" : "left")}: 10px;
+    content: "";
     width: 0;
     height: 0;
-    border: 10px solid transparent;
-    border- ${({ align }) => (align === "right" ? "right" : "left")}-color: ${({
-  align,
-}) => (align === "right" ? "#0084ff" : "#eee")};
-    border- ${({ align }) =>
-      align === "right" ? "left" : "right"}-color: transparent;
+    position: absolute;
+    border-left: 15px solid #0084ff;
+    border-right: 15px solid transparent;
+    border-top: 15px solid #0084ff;
+    border-bottom: 15px solid transparent;
+    transform: scaleX(-1) translateX(27px);
   }
+`;
+
+const AIMessage = styled(MessageBubble)`
+  align-self: flex-start;
+  background: #e5e5ea;
+  color: black;
+
+  .message {
+    margin: 0;
+  }
+
+  &::after {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    border-left: 15px solid transparent;
+    border-right: 15px solid #e5e5ea;
+    border-top: 15px solid #e5e5ea;
+    border-bottom: 15px solid transparent;
+    transform: scaleX(-1);
+  }
+`;
+
+const LoadingSpinner = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
 `;
 
 export default MessagesContainer;

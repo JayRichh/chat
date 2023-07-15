@@ -3,7 +3,6 @@ import styled from "styled-components";
 import React from "react";
 
 const ModeSwitcher = ({ subModel, setSubModel }) => {
-
   return (
     <ModeContainer>
       <AlignButton onMouseUp={(event) => event.target.blur()}>
@@ -42,7 +41,6 @@ const AlignButton = styled.div`
     font-size: 0.9rem;
   }
 `;
-
 
 const ModeContainer = styled.div`
   display: grid;

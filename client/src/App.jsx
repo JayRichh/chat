@@ -83,17 +83,15 @@ function App() {
 
   const sendMessage = async () => {
     setLoading(true);
+
+    const messages = [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: message },
+    ];
+    setChatHistory([...chatHistory, ...messages]);
+
     try {
-      const messages = [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message },
-      ];
-      console.log("System Message: ", systemPrompt);
-      console.log("User Message: ", message);
-
       const response = await axios.post("/api/chat", { model, messages });
-
-      console.log("AI Response: ", response.data);
 
       setChatHistory([
         ...chatHistory,
@@ -125,13 +123,15 @@ function App() {
       <ChatContainer>
         {!isDalleMode && (
           <>
-            <Label>System Prompt:</Label>
-            <SystemInput
-              type="text"
-              placeholder="You are a helpful assistant."
-              value={systemPrompt}
-              onChange={(e) => setSystemPrompt(e.target.value)}
-            />
+            <PromptContainer>
+              <Label>System Prompt:</Label>
+              <SystemInput
+                type="text"
+                placeholder="You are a helpful assistant."
+                value={systemPrompt}
+                onChange={(e) => setSystemPrompt(e.target.value)}
+              />
+            </PromptContainer>
             <MessagesContainer chatHistory={chatHistory} loading={loading} />
           </>
         )}
@@ -181,6 +181,7 @@ const Wrapper = styled.div`
   align-items: center;
   height: 100%;
   overflow-y: hidden;
+  background-color: #f5f5f5;
 `;
 
 const ChatContainer = styled.div`
@@ -189,7 +190,7 @@ const ChatContainer = styled.div`
   width: 50%;
   margin: 0 auto;
   padding: 10px 20px;
-  height: calc(100vh - 142px);
+  height: calc(100vh - 20vh);
   border: 1px solid #ddd;
   border-radius: 7px;
   background: #fff;
@@ -206,16 +207,27 @@ const ChatContainer = styled.div`
 `;
 
 const SystemInput = styled.input`
-  width: 100%;
+  flex-grow: 1;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid #ddd;
-  margin-bottom: 20px;
+  border: none;
+  background-color: #fff;
+  &:focus {
+    outline: none;
+    background-color: #f0f0f0;
 `;
 
 const Label = styled.label`
-  display: block;
-  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+`;
+
+const PromptContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 `;
 
 export default App;
