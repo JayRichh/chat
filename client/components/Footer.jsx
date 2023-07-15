@@ -1,14 +1,33 @@
 import styled from "styled-components";
 import React from "react";
+import { useState, useEffect } from "react";
 
 function Footer() {
-  const date = new Date();
+  const [time, setTime] = useState(formattedTime);
+  const [date, setDate] = useState(formattedDate);
 
-  const dayName = date.toLocaleString("default", { weekday: "long" });
-  const monthName = date.toLocaleString("default", { month: "long" });
+  const formattedDate = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const formattedTime = new Date().toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    hour12: true,
+  });
 
-  const formattedDate = `${dayName}, ${date.getDate()} ${monthName} ${date.getFullYear()}`;
-  const formattedTime = date.toLocaleTimeString();
+  const tick = () => {
+    setTime(formattedTime);
+    setDate(formattedDate);
+  };
+
+  useEffect(() => {
+    const timerID = setInterval(() => tick(), 1000);
+    return () => clearInterval(timerID);
+  });
 
   return (
     <FooterContainer
@@ -22,8 +41,8 @@ function Footer() {
         borderTop: "1px solid #dee2e6",
       }}
     >
-      <p style={{ margin: "0", color: "#6c757d" }}>{formattedDate}</p>
-      <p style={{ margin: "0", color: "#6c757d" }}>{formattedTime}</p>
+      <p style={{ margin: "0", color: "#6c757d" }}>{time}</p>
+      <p style={{ margin: "0", color: "#6c757d" }}>{date}</p>
     </FooterContainer>
   );
 }
